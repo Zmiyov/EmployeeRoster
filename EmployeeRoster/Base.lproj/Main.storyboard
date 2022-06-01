@@ -197,7 +197,7 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="iOK-pQ-odO" kind="show" id="5u5-gE-O4u"/>
+                                            <segue destination="iOK-pQ-odO" kind="show" destinationCreationSelector="showEmployeeTypes:" id="h3x-ll-mUL"/>
                                         </connections>
                                     </tableViewCell>
                                 </cells>

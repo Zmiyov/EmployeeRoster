@@ -5,8 +5,8 @@ protocol EmployeeDetailTableViewControllerDelegate: AnyObject {
     func employeeDetailTableViewController(_ controller: EmployeeDetailTableViewController, didSave employee: Employee)
 }
 
-class EmployeeDetailTableViewController: UITableViewController, UITextFieldDelegate {
-
+class EmployeeDetailTableViewController: UITableViewController, UITextFieldDelegate, EmployeeTypeTableViewControllerDelegate {
+    
     @IBOutlet var nameTextField: UITextField!
     @IBOutlet var dobLabel: UILabel!
     @IBOutlet var employeeTypeLabel: UILabel!
@@ -18,13 +18,15 @@ class EmployeeDetailTableViewController: UITableViewController, UITextFieldDeleg
     
     var isDobDatePickerVisible: Bool = false {
         didSet {
-          //  dobDatePicker.isHidden = !isDobDatePickerVisible
             tableView.beginUpdates()
             tableView.endUpdates()
         }
     }
     
     weak var delegate: EmployeeDetailTableViewControllerDelegate?
+    
+    var employeeType: EmployeeType?
+    
     var employee: Employee?
     
     override func viewDidLoad() {
@@ -32,6 +34,7 @@ class EmployeeDetailTableViewController: UITableViewController, UITextFieldDeleg
         
         updateView()
         updateSaveButtonState()
+        
     }
     
     func updateView() {
@@ -44,13 +47,15 @@ class EmployeeDetailTableViewController: UITableViewController, UITextFieldDeleg
             employeeTypeLabel.text = employee.employeeType.description
             employeeTypeLabel.textColor = .label
             dobDatePicker.date = employee.dateOfBirth
+            employeeType = employee.employeeType
+            
         } else {
             navigationItem.title = "New Employee"
         }
     }
     
     private func updateSaveButtonState() {
-        let shouldEnableSaveButton = nameTextField.text?.isEmpty == false
+        let shouldEnableSaveButton = nameTextField.text?.isEmpty == false && employeeType != nil
         saveBarButtonItem.isEnabled = shouldEnableSaveButton
     }
     
@@ -81,11 +86,11 @@ class EmployeeDetailTableViewController: UITableViewController, UITextFieldDeleg
     }
     
     @IBAction func saveButtonTapped(_ sender: Any) {
-        guard let name = nameTextField.text else {
-            return
-        }
+        guard let name = nameTextField.text,
+              let employeeType = employeeType else {return}
         
-        let employee = Employee(name: name, dateOfBirth: dobDatePicker.date, employeeType: .exempt)
+        let employee = Employee(name: name, dateOfBirth: dobDatePicker.date, employeeType: employeeType)
+        
         delegate?.employeeDetailTableViewController(self, didSave: employee)
     }
     
@@ -100,4 +105,24 @@ class EmployeeDetailTableViewController: UITableViewController, UITextFieldDeleg
     @IBAction func datePickerValueChanged(_ sender: Any) {
         dobLabel.text = dobDatePicker.date.formatted(date: .abbreviated, time: .omitted)
     }
+
+    // Delegate from types
+    
+    @IBSegueAction func showEmployeeTypes(_ coder: NSCoder) -> EmployeeTypeTableViewController? {
+        
+        let employeeTypeController = EmployeeTypeTableViewController(coder: coder)
+        employeeTypeController?.delegate = self
+        employeeTypeController?.employeeType = employeeType
+        
+        return employeeTypeController
+    }
+    
+    func employeeTypeTableViewController(_ controller: EmployeeTypeTableViewController, didSelect employee: EmployeeType) {
+        self.employeeType = employee
+        employeeTypeLabel.text = employeeType?.description
+        employeeTypeLabel.textColor = .black
+        updateSaveButtonState()
+    }
 }
+
+
