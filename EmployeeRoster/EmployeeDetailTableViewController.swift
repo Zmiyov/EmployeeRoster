@@ -19,8 +19,6 @@ class EmployeeDetailTableViewController: UITableViewController, UITextFieldDeleg
     var isDobDatePickerVisible: Bool = false {
         didSet {
             dobDatePicker.isHidden = !isDobDatePickerVisible
-            tableView.beginUpdates()
-            tableView.endUpdates()
         }
     }
     
@@ -90,6 +88,8 @@ class EmployeeDetailTableViewController: UITableViewController, UITextFieldDeleg
             dobLabel.textColor = .label
             dobLabel.text = dobDatePicker.date.formatted(date: .abbreviated, time: .omitted)
         }
+        tableView.beginUpdates()
+        tableView.endUpdates()
     }
     
     @IBAction func saveButtonTapped(_ sender: Any) {
