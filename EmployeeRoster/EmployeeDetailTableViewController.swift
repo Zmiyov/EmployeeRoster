@@ -32,6 +32,10 @@ class EmployeeDetailTableViewController: UITableViewController, UITextFieldDeleg
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let midnightToday = Calendar.current.startOfDay(for: Date())
+        dobDatePicker.minimumDate = Calendar.current.date(byAdding: .year, value: -65, to: midnightToday)
+        dobDatePicker.maximumDate = Calendar.current.date(byAdding: .year, value: -16, to: midnightToday)
+        
         updateView()
         updateSaveButtonState()
         
