@@ -18,6 +18,7 @@ class EmployeeDetailTableViewController: UITableViewController, UITextFieldDeleg
     
     var isDobDatePickerVisible: Bool = false {
         didSet {
+            dobDatePicker.isHidden = !isDobDatePickerVisible
             tableView.beginUpdates()
             tableView.endUpdates()
         }
@@ -64,17 +65,19 @@ class EmployeeDetailTableViewController: UITableViewController, UITextFieldDeleg
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath == dobDatePickerIndexPath, isDobDatePickerVisible == false {
+        switch indexPath {
+        case dobDatePickerIndexPath where isDobDatePickerVisible == false:
             return 0
-        } else {
+        default:
             return UITableView.automaticDimension
         }
     }
     
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath == dobDatePickerIndexPath {
+        switch indexPath {
+        case dobDatePickerIndexPath:
             return 190
-        } else {
+        default:
             return UITableView.automaticDimension
         }
     }
